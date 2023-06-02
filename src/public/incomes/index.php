@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['user']['id'])) {
-    header('Location: ./signin.php');
+    header('Location: ./users/signin.php');
     exit();
 }
 
@@ -134,11 +134,11 @@ $incomeSources = $statementIncomeSources->fetchAll(PDO::FETCH_ASSOC);
               <option value=""></option>
               <?php foreach ($incomeSources as $incomeSource): ?>
               <option value=<?php echo $incomeSource['id']; ?> <?php if (
-     isset($incomeSourceId) &&
-     $incomeSource['id'] == $incomeSourceId
- ) {
-     echo 'selected';
- } ?>><?php echo $incomeSource['name']; ?></option>
+    isset($incomeSourceId) &&
+    $incomeSource['id'] == $incomeSourceId
+) {
+    echo 'selected';
+} ?>><?php echo $incomeSource['name']; ?></option>
               <?php endforeach; ?>
             </select>
             日付:
