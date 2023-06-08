@@ -47,6 +47,5 @@ final class UserDao
       $statement->bindValue(':email', $email, PDO::PARAM_STR);
       $statement->bindValue(':password', $hashedPassword, PDO::PARAM_STR);
       $statement->execute();
-      
     }
 }
