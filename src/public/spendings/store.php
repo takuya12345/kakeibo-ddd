@@ -1,45 +1,36 @@
 <?php
+
+use App\Dao\SpendingDao;
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+// use App\Dao\SpendingDao;
+
+$name = filter_input(INPUT_POST, 'name');
+$categoryId = filter_input(INPUT_POST, 'categoryId', FILTER_SANITIZE_NUMBER_INT);
+$amount = filter_input(INPUT_POST, 'amount', FILTER_SANITIZE_NUMBER_INT);
+$accrualDate = filter_input(INPUT_POST, 'accrualDate');
+
+if (
+  empty($name) ||
+  empty($categoryId) ||
+  empty($amount) ||
+  empty($accrualDate)
+) {
+  echo '<h2>入力が正しくありません</h2>';
+  echo '<a href="./create.php">戻る</a>';
+  die();
+}
+
 session_start();
 if (!isset($_SESSION['user']['id'])) {
     header('Location: ./signin.php');
     exit();
 }
 
-$pdo = new PDO(
-    'mysql:host=mysql; dbname=kakeibo; charset=utf8',
-    'root',
-    'password'
-);
-$name = filter_input(INPUT_POST, 'name');
-$categoryId = filter_input(
-    INPUT_POST,
-    'categoryId',
-    FILTER_SANITIZE_NUMBER_INT
-);
-$amount = filter_input(INPUT_POST, 'amount', FILTER_SANITIZE_NUMBER_INT);
-$accrualDate = filter_input(INPUT_POST, 'accrualDate');
-
-if (
-    empty($name) ||
-    empty($categoryId) ||
-    empty($amount) ||
-    empty($accrualDate)
-) {
-    echo '<h2>入力が正しくありません</h2>';
-    echo '<a href="./create.php">戻る</a>';
-    die();
-}
-
 $userId = $_SESSION['user']['id'];
-$sql =
-    'INSERT INTO `spendings`(`id`, `name`, `user_id`, `category_id`, `amount`, `accrual_date`) VALUES(0, :name, :userId, :categoryId, :amount, :accrualDate)';
-$statement = $pdo->prepare($sql);
-$statement->bindValue(':name', $name, PDO::PARAM_STR);
-$statement->bindValue(':userId', $userId, PDO::PARAM_INT);
-$statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
-$statement->bindValue(':amount', $amount, PDO::PARAM_INT);
-$statement->bindValue(':accrualDate', $accrualDate, PDO::PARAM_STR);
-$statement->execute();
+$spendingDao = new SpendingDao;
+$createSpendingSource = $spendingDao->createSpendingSource($name, $userId, $categoryId, $amount, $accrualDate);
 
 header('Location: ./index.php');
 exit();
