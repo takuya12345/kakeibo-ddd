@@ -12,7 +12,6 @@ final class IncomeDao
 {
   /**
    * @var PDO
-   * @var string $incomeSourceId
    */
   private $pdo;
 
@@ -20,7 +19,6 @@ final class IncomeDao
    * コンストラクタ
    * 
    * @param PDO $pdo
-   * @param 
    */
   public function __construct()
   {
@@ -28,7 +26,11 @@ final class IncomeDao
   }
 
   /**
-   * return array $user
+   * @param int $userId
+   * @param int $incomeSourced
+   * @param int $amount
+   * @param string $accrualDate
+   * return void
    */
   public function createIncomeSource(int $incomeSourceId, int $amount, string $accrualDate): void
   {
