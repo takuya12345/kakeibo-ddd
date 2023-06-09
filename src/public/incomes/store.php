@@ -1,38 +1,27 @@
 <?php
-session_start();
-if (!isset($_SESSION['user']['id'])) {
-    header('Location: ./signin.php');
-    exit();
-}
 
-$pdo = new PDO(
-    'mysql:host=mysql; dbname=kakeibo; charset=utf8',
-    'root',
-    'password'
-);
-$incomeSourceId = filter_input(
-    INPUT_POST,
-    'incomeSourceId',
-    FILTER_SANITIZE_NUMBER_INT
-);
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use App\Dao\IncomeDao;
+
+$incomeSourceId = filter_input(INPUT_POST, 'incomeSourceId', FILTER_SANITIZE_NUMBER_INT);
 $amount = filter_input(INPUT_POST, 'amount', FILTER_SANITIZE_NUMBER_INT);
 $accrualDate = filter_input(INPUT_POST, 'accrualDate');
 
 if (empty($incomeSourceId) || empty($amount) || empty($accrualDate)) {
-    echo '<h2>入力が正しくありません</h2>';
-    echo '<a href="./create.php">戻る</a>';
-    die();
+  echo '<h2>入力が正しくありません</h2>';
+  echo '<a href="./create.php">戻る</a>';
+  die();
 }
 
-$userId = $_SESSION['user']['id'];
-$sql =
-    'INSERT INTO `incomes`(`id`, `user_id`, `income_source_id`, `amount`, `accrual_date`) VALUES(0, :userId, :incomeSourceId, :amount, :accrualDate)';
-$statement = $pdo->prepare($sql);
-$statement->bindValue(':userId', $userId, PDO::PARAM_INT);
-$statement->bindValue(':incomeSourceId', $incomeSourceId, PDO::PARAM_INT);
-$statement->bindValue(':amount', $amount, PDO::PARAM_INT);
-$statement->bindValue(':accrualDate', $accrualDate, PDO::PARAM_STR);
-$statement->execute();
+session_start();
+if (!isset($_SESSION['user']['id'])) {
+  header('Location: ./signin.php');
+  exit();
+}
+
+$incomeDao = new IncomeDao;
+$createIncomeSource = $incomeDao->createIncomeSource($incomeSourceId, $amount, $accrualDate);
 
 header('Location: ./index.php');
 exit();
