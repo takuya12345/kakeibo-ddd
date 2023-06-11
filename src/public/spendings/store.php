@@ -1,19 +1,24 @@
 <?php
 
 use App\Dao\SpendingDao;
+use App\Domain\ValueObject\User\UserName;
+use App\Domain\ValueObject\User\UserId;
+use App\Domain\ValueObject\User\SpendingsAmount;
+use App\Domain\ValueObject\User\CategoryId;
+use App\Domain\ValueObject\User\AccrualDate;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 $name = filter_input(INPUT_POST, 'name');
 $categoryId = filter_input(INPUT_POST, 'categoryId', FILTER_SANITIZE_NUMBER_INT);
 $amount = filter_input(INPUT_POST, 'amount', FILTER_SANITIZE_NUMBER_INT);
-$accrualDate = filter_input(INPUT_POST, 'accrualDate');
+$spendingsAccrualDate = filter_input(INPUT_POST, 'accrualDate');
 
 if (
   empty($name) ||
   empty($categoryId) ||
   empty($amount) ||
-  empty($accrualDate)
+  empty($spendingsAccrualDate)
 ) {
   echo '<h2>入力が正しくありません</h2>';
   echo '<a href="./create.php">戻る</a>';
@@ -26,9 +31,19 @@ if (!isset($_SESSION['user']['id'])) {
     exit();
 }
 
-$userId = $_SESSION['user']['id'];
+// 
+$userName = new UserName($name);
+$userId = new UserId($_SESSION['user']['id']);
+$spendingsAmount = new SpendingsAmount($amount);
+$categoryId = new CategoryId($categoryId);
+$accrualDate = new AccrualDate($spendingsAccrualDate);
 $spendingDao = new SpendingDao;
-$createSpendingSource = $spendingDao->createSpendingSource($name, $userId, $categoryId, $amount, $accrualDate);
+$createSpendingSource = $spendingDao->createSpendingSource($userName->value(), $userId->value(), $spendingsAmount->value(),  $categoryId->value(), $accrualDate->value());
+// 全ての値が、nullじゃないか、揃っているかどうか
+$spendingsUseCaseInput = new UseCaseInput($userName, $userId, $spendingsAmount,  $categoryId, $accrualDate);
+$spendingsUseCaseInteractor = new UseCaseInteractor($spendingsUseCaseInput, $spendingDao);
+// true or falseで判定
+$spendingsUseCaseOutput = new UseCaseOutput();
 
 header('Location: ./index.php');
 exit();
