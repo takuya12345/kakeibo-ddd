@@ -4,8 +4,6 @@ use App\Dao\SpendingDao;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-// use App\Dao\SpendingDao;
-
 $name = filter_input(INPUT_POST, 'name');
 $categoryId = filter_input(INPUT_POST, 'categoryId', FILTER_SANITIZE_NUMBER_INT);
 $amount = filter_input(INPUT_POST, 'amount', FILTER_SANITIZE_NUMBER_INT);
