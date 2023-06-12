@@ -17,8 +17,6 @@ final class IncomeDao
 
   /**
    * コンストラクタ
-   * 
-   * @param PDO $pdo
    */
   public function __construct()
   {
@@ -26,7 +24,6 @@ final class IncomeDao
   }
 
   /**
-   * @param int $userId
    * @param int $incomeSourced
    * @param int $amount
    * @param string $accrualDate
