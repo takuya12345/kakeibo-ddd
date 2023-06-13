@@ -6,9 +6,9 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 use PDO;
 
 /**
- * 収入のDao
+ * 支出のDao
  */
-final class IncomeDao
+final class SpendingDao
 {
   /**
    * @var PDO
@@ -17,6 +17,8 @@ final class IncomeDao
 
   /**
    * コンストラクタ
+   * 
+   * @param PDO $pdo
    */
   public function __construct()
   {
@@ -24,18 +26,20 @@ final class IncomeDao
   }
 
   /**
-   * @param int $incomeSourced
+   * @param string $name
+   * @param int $userId
+   * @param int $categoryId
    * @param int $amount
    * @param string $accrualDate
    * return void
    */
-  public function createIncomeSource(int $incomeSourceId, int $amount, string $accrualDate): void
+  public function createSpendingSource(string $name, int $userId, int $categoryId, int $amount, string $accrualDate): void
   {
-    $userId = $_SESSION['user']['id'];
-    $sql = 'INSERT INTO `incomes`(`id`, `user_id`, `income_source_id`, `amount`, `accrual_date`) VALUES(0, :userId, :incomeSourceId, :amount, :accrualDate)';
+    $sql = 'INSERT INTO `spendings`(`id`, `name`, `user_id`, `category_id`, `amount`, `accrual_date`) VALUES(0, :name, :userId, :categoryId, :amount, :accrualDate)';
     $statement = $this->pdo->prepare($sql);
+    $statement->bindValue(':name', $name, PDO::PARAM_STR);
     $statement->bindValue(':userId', $userId, PDO::PARAM_INT);
-    $statement->bindValue(':incomeSourceId', $incomeSourceId, PDO::PARAM_INT);
+    $statement->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
     $statement->bindValue(':amount', $amount, PDO::PARAM_INT);
     $statement->bindValue(':accrualDate', $accrualDate, PDO::PARAM_STR);
     $statement->execute();
