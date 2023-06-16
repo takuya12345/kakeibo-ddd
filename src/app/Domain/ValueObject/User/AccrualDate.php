@@ -51,7 +51,9 @@ final class AccrualDate
      */
     private function isInvalid(string $value): bool
     {
-        // ここのバリデーションが分からない
-        return mb_strlen($value) > 20;
+        $preg = '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/';
+
+        // DB、spendingsテーブルのaccrual_dateカラムと正規表現が一致するかどうかの判定
+        return !preg_match($preg, $value);
     }
 }
